@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可爱小狗 - 张鑫语的个人网站</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffd1ff 100%);
+            font-family: 'Noto Sans SC', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0%, transparent 40%),
+                radial-gradient(circle at 40% 90%, rgba(255,255,255,0.15) 0%, transparent 40%);
+            z-index: 1;
+        }
+        
+        /* 飘动的小狗装饰 */
+        .floating-puppy {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: floatPuppy 12s linear infinite;
+        }
+        
+        @keyframes floatPuppy {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 粉色气泡装饰 */
+        .bubble {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 182, 193, 0.6);
+            border-radius: 50%;
+            animation: bubbleFloat 15s linear infinite;
+        }
+        
+        @keyframes bubbleFloat {
+            0% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* 视频容器 */
+        .video-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 20px;
+        }
+        
+        /* 自定义视频控制按钮 */
+        .custom-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .control-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        .play-pause-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff6b9d, #ff9ff3);
+        }
+        
+        /* 音量控制 */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .volume-slider {
+            width: 120px;
+            height: 6px;
+            background: rgba(255, 107, 157, 0.3);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            cursor: pointer;
+            border: none;
+        }
+        
+        /* 视频信息 */
+        .video-info {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .video-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #ff6b9d;
+        }
+        
+        .video-description {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        /* 可爱装饰元素 */
+        .cute-decorations {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            40% {
+                transform: translateY(-10px) rotate(10deg);
+            }
+            60% {
+                transform: translateY(-5px) rotate(-5deg);
+            }
+        }
+        
+        /* 爱心飞舞效果 */
+        .heart-burst {
+            position: fixed;
+            pointer-events: none;
+            z-index: 15;
+            font-size: 20px;
+            color: #ff6b9d;
+            animation: heartBurst 2s ease-out forwards;
+        }
+        
+        @keyframes heartBurst {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(0.8) rotate(360deg) translateY(-100px);
+                opacity: 0;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .video-container {
+                padding: 20px;
+                margin: 0 10px 20px;
+            }
+            
+            .custom-controls {
+                gap: 10px;
+            }
+            
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .play-pause-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.8rem;
+            }
+            
+            .volume-slider {
+                width: 100px;
+            }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: none;
+            text-align: center;
+            color: #ff6b9d;
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 107, 157, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff6b9d;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">🐶 可爱小狗</h1>
+        <p class="subtitle">准备好被萌化了吗～</p>
+        <a href="index.html" class="back-btn">← 返回首页</a>
+    </header>
+    
+    <div class="video-container">
+        <div class="cute-decorations">🐾</div>
+        
+        <div class="video-info">
+            <h2 class="video-title">超级可爱的小狗狗</h2>
+            <p class="video-description">13秒的纯净快乐时光 💕</p>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            视频加载中...
+        </div>
+        
+        <div class="video-wrapper">
+            <video 
+                id="puppyVideo" 
+                class="video-player" 
+                preload="metadata"
+            >
+                <source src="puppy.mp4" type="video/mp4">
+                <p>您的浏览器不支持视频播放，请尝试更新浏览器或使用其他浏览器观看。</p>
+            </video>
+        </div>
+        
+        <div class="custom-controls">
+            <button class="control-btn" onclick="rewindVideo()" title="倒退10秒">
+                ⏪
+            </button>
+            <button class="control-btn play-pause-btn" id="playPauseBtn" onclick="togglePlayPause()" title="播放/暂停">
+                ▶️
+            </button>
+            <button class="control-btn" onclick="forwardVideo()" title="快进10秒">
+                ⏩
+            </button>
+            <button class="control-btn" onclick="toggleMute()" id="muteBtn" title="静音/取消静音">
+                🔊
+            </button>
+        </div>
+        
+        <div class="volume-container">
+            <span style="color: #ff6b9d;">🔉</span>
+            <input 
+                type="range" 
+                class="volume-slider" 
+                id="volumeSlider" 
+                min="0" 
+                max="100" 
+                value="70"
+                oninput="changeVolume(this.value)"
+            >
+            <span style="color: #ff6b9d;">🔊</span>
+        </div>
+    </div>
+    
+    <script>
+        const video = document.getElementById('puppyVideo');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+        
+        // 设置初始音量
+        video.volume = 0.7;
+        
+        // 播放/暂停控制
+        function togglePlayPause() {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.textContent = '⏸️';
+                createHeartBurst();
+            } else {
+                video.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        }
+        
+        // 倒退10秒
+        function rewindVideo() {
+            video.currentTime = Math.max(0, video.currentTime - 10);
+        }
+        
+        // 快进10秒
+        function forwardVideo() {
+            video.currentTime = Math.min(video.duration, video.currentTime + 10);
+        }
+        
+        // 静音切换
+        function toggleMute() {
+            if (video.muted) {
+                video.muted = false;
+                muteBtn.textContent = '🔊';
+                volumeSlider.value = video.volume * 100;
+            } else {
+                video.muted = true;
+                muteBtn.textContent = '🔇';
+                volumeSlider.value = 0;
+            }
+        }
+        
+        // 音量控制
+        function changeVolume(value) {
+            const volume = value / 100;
+            video.volume = volume;
+            video.muted = false;
+            
+            if (volume === 0) {
+                muteBtn.textContent = '🔇';
+            } else if (volume < 0.5) {
+                muteBtn.textContent = '🔉';
+            } else {
+                muteBtn.textContent = '🔊';
+            }
+        }
+        
+        // 视频事件监听
+        video.addEventListener('loadstart', function() {
+            document.getElementById('loading').classList.add('show');
+        });
+        
+        video.addEventListener('canplay', function() {
+            document.getElementById('loading').classList.remove('show');
+        });
+        
+        video.addEventListener('error', function() {
+            document.getElementById('loading').classList.remove('show');
+            alert('视频加载失败！请确保puppy.mp4文件已正确上传到服务器。\n\n如果问题持续存在，请检查：\n1. 文件名是否正确\n2. 文件格式是否为MP4\n3. 网络连接是否正常');
+        });
+        
+        video.addEventListener('ended', function() {
+            playPauseBtn.textContent = '▶️';
+            createHeartBurst();
+        });
+        
+        video.addEventListener('timeupdate', function() {
+            // 可以在这里添加进度条更新逻辑
+        });
+
+        
+        // 创建爱心飞舞效果
+        function createHeartBurst() {
+            const hearts = ['💕', '💖', '💗', '💝', '🐾'];
+            const container = document.querySelector('.video-container');
+            const rect = container.getBoundingClientRect();
+            
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-burst';
+                    heart.style.left = (rect.left + rect.width/2 + (Math.random() - 0.5) * 200) + 'px';
+                    heart.style.top = (rect.top + rect.height/2 + (Math.random() - 0.5) * 100) + 'px';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 2000);
+                }, i * 100);
+            }
+        }
+        
+        // 创建飘动的小狗装饰
+        function createFloatingPuppy() {
+            const puppies = ['🐶', '🐕', '🐩', '🦮', '🐕‍🦺', '🐾'];
+            const puppy = document.createElement('div');
+            puppy.className = 'floating-puppy';
+            puppy.style.left = Math.random() * window.innerWidth + 'px';
+            puppy.textContent = puppies[Math.floor(Math.random() * puppies.length)];
+            
+            document.body.appendChild(puppy);
+            
+            setTimeout(() => {
+                puppy.remove();
+            }, 12000);
+        }
+        
+        // 创建粉色气泡
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.left = Math.random() * window.innerWidth + 'px';
+            bubble.style.width = (Math.random() * 30 + 10) + 'px';
+            bubble.style.height = bubble.style.width;
+            
+            document.body.appendChild(bubble);
+            
+            setTimeout(() => {
+                bubble.remove();
+            }, 15000);
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', () => {
+            // 创建初始装饰
+            for(let i = 0; i < 3; i++) {
+                setTimeout(() => createFloatingPuppy(), i * 2000);
+                setTimeout(() => createBubble(), i * 1500 + 500);
+            }
+            
+            // 定期创建飘动装饰
+            setInterval(createFloatingPuppy, 4000 + Math.random() * 2000);
+            setInterval(createBubble, 3000 + Math.random() * 2000);
+            
+            // 键盘快捷键支持
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    togglePlayPause();
+                } else if (e.code === 'ArrowLeft') {
+                    rewindVideo();
+                } else if (e.code === 'ArrowRight') {
+                    forwardVideo();
+                } else if (e.code === 'KeyM') {
+                    toggleMute();
+                }
+            });
+        });
+        
+        // 双击视频切换播放状态
+        video.addEventListener('dblclick', togglePlayPause);
+        
+        // 点击视频切换播放状态
+        video.addEventListener('click', togglePlayPause);
+    </script>
+</body>
+</html>
