@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温暖便签 - 张鑫语的个人网站</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            font-family: 'Noto Sans SC', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 90%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+        
+        /* 飘动的小装饰 */
+        .floating-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            font-size: 20px;
+            opacity: 0.6;
+            color: rgba(255,255,255,0.8);
+            animation: floatDecoration 15s linear infinite;
+        }
+        
+        @keyframes floatDecoration {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .title {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* 便签容器 */
+        .sticky-note-container {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 30px;
+        }
+        
+        .sticky-note {
+            background: #ffeb3b;
+            background: linear-gradient(135deg, #ffeb3b 0%, #fff176 100%);
+            width: 320px;
+            min-height: 280px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 
+                0 8px 25px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            position: relative;
+            padding: 30px 25px 25px;
+            transform: rotate(-2deg);
+            transition: all 0.3s ease;
+            border-top: 20px solid #f9c74f;
+        }
+        
+        .sticky-note:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+        
+        /* 便签顶部的胶带效果 */
+        .sticky-note::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* 便签左侧的孔洞装饰 */
+        .sticky-note::after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #f9c74f;
+            box-shadow: 
+                0 20px 0 #f9c74f,
+                0 40px 0 #f9c74f,
+                0 -20px 0 #f9c74f,
+                0 -40px 0 #f9c74f;
+        }
+        
+        .note-content {
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .quote-text {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+        }
+        
+        .quote-author {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            text-align: right;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .quote-emoji {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin: 5px;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .refresh-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .sticky-note {
+                width: 280px;
+                min-height: 250px;
+                padding: 25px 20px 20px;
+            }
+            
+            .quote-text {
+                font-size: 1.1rem;
+                min-height: 80px;
+            }
+            
+            .refresh-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* 心形飘动效果 */
+        .heart-float {
+            position: fixed;
+            pointer-events: none;
+            z-index: 5;
+            font-size: 20px;
+            color: rgba(255, 182, 193, 0.8);
+            animation: heartFloat 8s linear infinite;
+        }
+        
+        @keyframes heartFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">💌 温暖便签</h1>
+        <p class="subtitle">每一句话都是给你的小温暖～</p>
+        <a href="index.html" class="back-btn">← 返回首页</a>
+    </header>
+    
+    <div class="sticky-note-container">
+        <div class="sticky-note">
+            <div class="note-content">
+                <div class="quote-emoji" id="quoteEmoji">✨</div>
+                <div class="quote-text" id="quoteText">
+                    点击下面的按钮，获取今天的温暖话语吧！
+                </div>
+                <div class="quote-author" id="quoteAuthor">— 准备好了吗？</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="refresh-btn" onclick="getNewQuote()">
+            🎲 换一句温暖的话
+        </button>
+        <button class="refresh-btn" onclick="shareQuote()" style="background: linear-gradient(45deg, #48cae4, #023e8a);">
+            💝 分享这份温暖
+        </button>
+    </div>
+    
+    <script>
+        // 温暖话语数据库
+        const quotes = [
+            {
+                text: "你就是自己的太阳，无须凭借谁的光。",
+                author: "— 致独特的你",
+                emoji: "☀️"
+            },
+            {
+                text: "每一个优秀的人，都有一段沉默的时光。那一段时光，是付出了很多努力，忍受孤独和寂寞，不抱怨不诉苦，日后说起时，连自己都能被感动的日子。",
+                author: "— 给努力的你",
+                emoji: "🌟"
+            },
+            {
+                text: "愿你有高跟鞋也有跑鞋，喝茶也喝酒。愿你有勇敢的朋友，有牛逼的对手。愿你对过往的一切情深意重，但从不回头。",
+                author: "— 大冰",
+                emoji: "🌈"
+            },
+            {
+                text: "你要做一个不动声色的大人了。不准情绪化，不准偷偷想念，不准回头看。去过自己另外的生活。",
+                author: "— 村上春树",
+                emoji: "🦋"
+            },
+            {
+                text: "今天的努力，是为了明天更好的自己。",
+                author: "— 每日提醒",
+                emoji: "💪"
+            },
+            {
+                text: "生活明朗，万物可爱，人间值得，未来可期。",
+                author: "— 生活哲学",
+                emoji: "🌸"
+            },
+            {
+                text: "你要相信，这个世界运气是守恒的，你现在所受的苦最终会变成你喜欢的甜。",
+                author: "— 致坚持的你",
+                emoji: "🍯"
+            },
+            {
+                text: "山海皆可平，难平是人心。人心若得平，山海亦可平。",
+                author: "— 古语智慧",
+                emoji: "⛰️"
+            },
+            {
+                text: "做人如水，你高，我便退去，决不淹没你的优点；你低，我便涌来，决不暴露你的缺陷。",
+                author: "— 处世哲学",
+                emoji: "💧"
+            },
+            {
+                text: "愿你永远年轻，永远热泪盈眶。",
+                author: "— 致青春的你",
+                emoji: "✨"
+            },
+            {
+                text: "星光不问赶路人，时光不负有心人。",
+                author: "— 勉励箴言",
+                emoji: "⭐"
+            },
+            {
+                text: "你要储蓄你的可爱，眷顾你的善良，变得勇敢。当这个世界越来越坏时，只希望你越来越好。",
+                author: "— 温柔提醒",
+                emoji: "🌺"
+            },
+            {
+                text: "世界很大，幸福很小。一家人整整齐齐，健健康康，幸幸福福地在一起。就是理想中的市井生活。",
+                author: "— 平凡的幸福",
+                emoji: "🏠"
+            },
+            {
+                text: "愿你三冬暖，愿你春不寒；愿你天黑有灯，下雨有伞；愿你路上有良人相伴。",
+                author: "— 美好祝愿",
+                emoji: "🌙"
+            },
+            {
+                text: "人生就像一盒巧克力，你永远不知道下一颗是什么味道。",
+                author: "— 《阿甘正传》",
+                emoji: "🍫"
+            },
+            {
+                text: "慢慢来，谁还没有一个努力的过程。",
+                author: "— 给着急的你",
+                emoji: "🐌"
+            },
+            {
+                text: "总有一天，你的努力会为你证明自己。",
+                author: "— 坚持信念",
+                emoji: "🏆"
+            },
+            {
+                text: "做最真实的自己，才能遇见最应该的那个人。",
+                author: "— 关于真实",
+                emoji: "💎"
+            },
+            {
+                text: "愿你眼中总有光芒，活成你想要的模样。",
+                author: "— 美好期许",
+                emoji: "🌟"
+            },
+            {
+                text: "温柔要有，但不是妥协。我们要在安静中，不慌不忙地坚强。",
+                author: "— 林徽因",
+                emoji: "🕊️"
+            },
+            {
+                text: "每个人都有属于自己的一片森林，也许我们从来不曾去过，但它一直在那里，总会在那里。",
+                author: "— 村上春树",
+                emoji: "🌲"
+            },
+            {
+                text: "你一定要站在自己所热爱的世界里，闪闪发亮。",
+                author: "— 致追梦的你",
+                emoji: "💫"
+            },
+            {
+                text: "愿你有软肋，也有盔甲。愿你拈花一笑，也仗剑天涯。",
+                author: "— 致勇敢的你",
+                emoji: "🗡️"
+            },
+            {
+                text: "别忘了答应自己要做的事情，别忘了答应自己要去的地方。",
+                author: "— 梦想提醒",
+                emoji: "🎯"
+            },
+            {
+                text: "愿你的生活常温暖，日子总是温柔又闪光。",
+                author: "— 温暖祝福",
+                emoji: "🔥"
+            }
+        ];
+        
+        let currentQuoteIndex = -1;
+        
+        // 获取新的话语
+        function getNewQuote() {
+            // 确保不重复上一句
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * quotes.length);
+            } while (newIndex === currentQuoteIndex && quotes.length > 1);
+            
+            currentQuoteIndex = newIndex;
+            const quote = quotes[currentQuoteIndex];
+            
+            // 添加切换动画
+            const noteContent = document.querySelector('.note-content');
+            noteContent.style.opacity = '0';
+            noteContent.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                document.getElementById('quoteEmoji').textContent = quote.emoji;
+                document.getElementById('quoteText').textContent = quote.text;
+                document.getElementById('quoteAuthor').textContent = quote.author;
+                
+                noteContent.style.opacity = '1';
+                noteContent.style.transform = 'translateY(0)';
+            }, 300);
+            
+            // 便签晃动效果
+            const stickyNote = document.querySelector('.sticky-note');
+            stickyNote.style.animation = 'none';
+            setTimeout(() => {
+                stickyNote.style.animation = 'bounce 0.6s ease-out';
+            }, 10);
+            
+            // 创建飘动的心形
+            createHeartFloat();
+        }
+        
+        // 分享功能
+        function shareQuote() {
+            const quote = quotes[currentQuoteIndex];
+            if (quote) {
+                const shareText = `${quote.text} ${quote.author}\n\n来自张鑫语的温暖便签 💕`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: '温暖便签',
+                        text: shareText
+                    });
+                } else {
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        alert('已复制到剪贴板！快去分享这份温暖吧 💕');
+                    }).catch(() => {
+                        alert('分享文本：\n' + shareText);
+                    });
+                }
+            } else {
+                alert('请先获取一句话语再分享哦～');
+            }
+        }
+        
+        // 创建飘动装饰
+        function createFloatingDecoration() {
+            const decorations = ['💕', '🌸', '✨', '💖', '🦋', '⭐', '🌙', '☀️'];
+            const decoration = document.createElement('div');
+            decoration.className = 'floating-decoration';
+            decoration.style.left = Math.random() * window.innerWidth + 'px';
+            decoration.textContent = decorations[Math.floor(Math.random() * decorations.length)];
+            
+            document.body.appendChild(decoration);
+            
+            setTimeout(() => {
+                decoration.remove();
+            }, 15000);
+        }
+        
+        // 创建心形飘动效果
+        function createHeartFloat() {
+            const hearts = ['💕', '💖', '💗', '💝'];
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-float';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 8000);
+                }, i * 200);
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', () => {
+            // 创建初始装饰
+            for(let i = 0; i < 3; i++) {
+                setTimeout(() => createFloatingDecoration(), i * 2000);
+            }
+            
+            // 定期创建飘动装饰
+            setInterval(createFloatingDecoration, 5000 + Math.random() * 3000);
+            
+            // 自动获取第一句话语
+            setTimeout(() => {
+                getNewQuote();
+            }, 1000);
+            
+            // 添加便签的CSS过渡效果
+            const noteContent = document.querySelector('.note-content');
+            noteContent.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        });
+    </script>
+</body>
+</html>
