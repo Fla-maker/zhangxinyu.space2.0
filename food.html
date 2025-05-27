@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美食转盘 - 张鑫语的个人网站</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Noto Sans SC', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .title {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .wheel-container {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 30px;
+        }
+        
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .wheel-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .wheel-section .food-content {
+            transform: rotate(-22.5deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wheel-section .food-emoji {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+        
+        .wheel-section .food-name {
+            font-size: 0.8rem;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        
+        .wheel-section:nth-child(1) { background: #FF6B6B; transform: rotate(0deg); }
+        .wheel-section:nth-child(2) { background: #4ECDC4; transform: rotate(45deg); }
+        .wheel-section:nth-child(3) { background: #45B7D1; transform: rotate(90deg); }
+        .wheel-section:nth-child(4) { background: #96CEB4; transform: rotate(135deg); }
+        .wheel-section:nth-child(5) { background: #FFEAA7; transform: rotate(180deg); color: #333; }
+        .wheel-section:nth-child(6) { background: #DDA0DD; transform: rotate(225deg); }
+        .wheel-section:nth-child(7) { background: #98D8C8; transform: rotate(270deg); }
+        .wheel-section:nth-child(8) { background: #F7DC6F; transform: rotate(315deg); color: #333; }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #fff;
+            z-index: 20;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            z-index: 15;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .controls {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+        
+        .spin-btn {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin: 5px;
+        }
+        
+        .spin-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(45deg, #96CEB4, #FFEAA7);
+        }
+        
+        .result {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .result-emoji {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .wheel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .wheel-section {
+                font-size: 0.9rem;
+            }
+            
+            .spin-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">🍰 美食转盘</h1>
+        <p class="subtitle">转动转盘，看看今天吃什么～</p>
+        <a href="index.html" class="back-btn">← 返回首页</a>
+    </header>
+    
+    <div class="wheel-container">
+        <div class="wheel-pointer"></div>
+        <div class="wheel" id="wheel">
+            <div class="wheel-section" id="section0"></div>
+            <div class="wheel-section" id="section1"></div>
+            <div class="wheel-section" id="section2"></div>
+            <div class="wheel-section" id="section3"></div>
+            <div class="wheel-section" id="section4"></div>
+            <div class="wheel-section" id="section5"></div>
+            <div class="wheel-section" id="section6"></div>
+            <div class="wheel-section" id="section7"></div>
+        </div>
+        <div class="wheel-center"></div>
+    </div>
+    
+    <div class="controls">
+        <button class="spin-btn" id="spinBtn" onclick="spinWheel()">开始转盘！</button>
+        <button class="spin-btn refresh-btn" onclick="refreshFoods()">换一批美食</button>
+        <div class="result" id="result">
+            <div class="result-text">点击按钮开始转盘吧！🎯</div>
+        </div>
+    </div>
+    
+    <script>
+        // 所有美食选项
+        const allFoods = [
+            { name: '火锅', emoji: '🍲' }, { name: '烧烤', emoji: '🍢' }, { name: '烤肉', emoji: '🥩' }, 
+            { name: '牛排', emoji: '🥩' }, { name: '烤鱼', emoji: '🐟' }, { name: '螺蛳粉', emoji: '🍜' }, 
+            { name: '酸辣粉', emoji: '🍜' }, { name: '米粉', emoji: '🍜' }, { name: '过桥米线', emoji: '🍜' }, 
+            { name: '花甲粉', emoji: '🍜' }, { name: '兰州拉面', emoji: '🍜' }, { name: '麻辣烫', emoji: '🍲' }, 
+            { name: '炸酱面', emoji: '🍝' }, { name: '热干面', emoji: '🍝' }, { name: '刀削面', emoji: '🍝' }, 
+            { name: '炒河粉', emoji: '🍝' }, { name: '酸汤肥牛', emoji: '🍲' }, { name: '西红柿炒鸡蛋', emoji: '🍳' }, 
+            { name: '北京烤鸭', emoji: '🦆' }, { name: '泡萝卜', emoji: '🥕' }, { name: '排骨玉米汤', emoji: '🍲' }, 
+            { name: '麻婆豆腐', emoji: '🥘' }, { name: '凉拌鱼皮', emoji: '🐟' }, { name: '酸辣土豆丝', emoji: '🥔' }, 
+            { name: '梅菜扣肉', emoji: '🥩' }, { name: '猪肉炖粉条', emoji: '🍲' }, { name: '土豆炖牛腩', emoji: '🍲' }, 
+            { name: '白灼虾', emoji: '🦐' }, { name: '清蒸大闸蟹', emoji: '🦀' }, { name: '糖醋里脊', emoji: '🥩' }, 
+            { name: '荔枝肉', emoji: '🥩' }, { name: '虎皮鸡爪', emoji: '🍗' }, { name: '酸菜鱼', emoji: '🐟' }, 
+            { name: '水煮肉片', emoji: '🥩' }, { name: '香辣小龙虾', emoji: '🦞' }, { name: '辣椒炒肉', emoji: '🌶️' }, 
+            { name: '宫保鸡丁', emoji: '🍗' }, { name: '鱼香肉丝', emoji: '🥩' }, { name: '回锅肉', emoji: '🥩' }, 
+            { name: '白切鸡', emoji: '🍗' }, { name: '红烧狮子头', emoji: '🥩' }, { name: '龙井虾仁', emoji: '🦐' }, 
+            { name: '佛跳墙', emoji: '🍲' }, { name: '四果汤', emoji: '🥤' }, { name: '炸浮果', emoji: '🍩' }, 
+            { name: '汉堡', emoji: '🍔' }, { name: '黄豆炖猪脚', emoji: '🍲' }, { name: '牛肉羹', emoji: '🍲' }, 
+            { name: '烧肉粽', emoji: '🥟' }, { name: '酸辣汤', emoji: '🍲' }, { name: '梅菜扣肉饼', emoji: '🥞' }, 
+            { name: '炸淀粉肠', emoji: '🌭' }, { name: '手抓饼', emoji: '🥞' }, { name: '章鱼小丸子', emoji: '🍡' }, 
+            { name: '凉皮', emoji: '🍜' }, { name: '寿司', emoji: '🍣' }, { name: '福鼎肉片', emoji: '🥩' }, 
+            { name: '炒馕', emoji: '🥞' }, { name: '烤馕', emoji: '🥞' }, { name: '钵仔糕', emoji: '🍰' }, 
+            { name: '臭豆腐', emoji: '🧈' }, { name: '水煎包', emoji: '🥟' }, { name: '扁食', emoji: '🥟' }, 
+            { name: '烤冷面', emoji: '🥞' }, { name: '鸡蛋仔', emoji: '🥚' }, { name: '肉夹馍', emoji: '🥙' }, 
+            { name: '酱香饼', emoji: '🥞' }, { name: '葱油饼', emoji: '🥞' }, { name: '关东煮', emoji: '🍢' }, 
+            { name: '豆花', emoji: '🍮' }, { name: '煎饼果子', emoji: '🥞' }, { name: '小笼包', emoji: '🥟' }, 
+            { name: '黄山烧饼', emoji: '🥞' }, { name: '水晶虾饺', emoji: '🥟' }, { name: '钵钵鸡', emoji: '🍗' }, 
+            { name: '炸牛奶', emoji: '🥛' }, { name: '炒酸奶', emoji: '🍦' }, { name: '烤面筋', emoji: '🍖' }, 
+            { name: '烤苕皮', emoji: '🍠' }, { name: '金丝牛肉饼', emoji: '🥞' }, { name: '铁板鱿鱼', emoji: '🦑' }, 
+            { name: '脆皮五花肉', emoji: '🥩' }, { name: '小酥肉', emoji: '🥩' }, { name: '脆皮年糕', emoji: '🍘' }, 
+            { name: '蜜汁叉烧饭', emoji: '🍚' }, { name: '腊味煲仔饭', emoji: '🍚' }, { name: '香辣鸡腿堡', emoji: '🍔' }, 
+            { name: '奥尔良烤翅', emoji: '🍗' }, { name: '炸薯条', emoji: '🍟' }, { name: '正新鸡排', emoji: '🍗' }, 
+            { name: '披萨意面', emoji: '🍕' }, { name: '上校鸡块', emoji: '🍗' }, { name: '韩式炸鸡', emoji: '🍗' }, 
+            { name: '铁板豆腐', emoji: '🧈' }, { name: '麻辣香锅', emoji: '🍲' }, { name: '肠粉', emoji: '🍜' }, 
+            { name: '盐鸡泡椒', emoji: '🍗' }, { name: '口水鸡', emoji: '🍗' }, { name: '捞汁小海鲜', emoji: '🦐' }, 
+            { name: '雪花酥', emoji: '🍪' }, { name: '龙须酥', emoji: '🍪' }, { name: '蛋黄酥', emoji: '🥮' }, 
+            { name: '鲜花饼', emoji: '🥮' }, { name: '绿豆糕', emoji: '🍰' }, { name: '红糖发糕', emoji: '🍰' }, 
+            { name: '芒果千层', emoji: '🍰' }, { name: '麻薯', emoji: '🍡' }, { name: '泡芙', emoji: '🧁' }, 
+            { name: '三明治', emoji: '🥪' }, { name: '蛋挞', emoji: '🥧' }, { name: '雪媚娘', emoji: '🍡' }, 
+            { name: '铜锣烧', emoji: '🥞' }, { name: '甜甜圈', emoji: '🍩' }, { name: '红糖糍粑', emoji: '🍡' }, 
+            { name: '烧仙草', emoji: '🍮' }, { name: '杨梅', emoji: '🍇' }, { name: '荔枝', emoji: '🍇' }, 
+            { name: '藕粉', emoji: '🥤' }, { name: '凉虾', emoji: '🦐' }, { name: '冰粉', emoji: '🍧' }, 
+            { name: '酸梅汤', emoji: '🥤' }
+        ];
+        
+        // 随机选择8个食物用于转盘
+        function getRandomFoods() {
+            const shuffled = [...allFoods].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 8);
+        }
+        
+        let currentFoods = getRandomFoods();
+        let isSpinning = false;
+        
+        // 初始化转盘显示
+        function initWheel() {
+            for (let i = 0; i < 8; i++) {
+                const section = document.getElementById(`section${i}`);
+                section.innerHTML = `
+                    <div class="food-content">
+                        <div class="food-emoji">${currentFoods[i].emoji}</div>
+                        <div class="food-name">${currentFoods[i].name}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // 刷新美食选项
+        function refreshFoods() {
+            currentFoods = getRandomFoods();
+            initWheel();
+            document.getElementById('result').innerHTML = '<div class="result-text">新的美食已准备好！点击转盘开始吧！🎯</div>';
+            
+            // 重置转盘角度
+            document.getElementById('wheel').style.transform = 'rotate(0deg)';
+            document.getElementById('spinBtn').textContent = '开始转盘！';
+        }
+        
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const spinBtn = document.getElementById('spinBtn');
+            const result = document.getElementById('result');
+            const wheel = document.getElementById('wheel');
+            
+            spinBtn.disabled = true;
+            spinBtn.textContent = '转盘中...';
+            
+            // 清除之前的结果
+            result.innerHTML = '<div class="result-text">转盘转动中... 🌪️</div>';
+            
+            // 计算随机角度 (多转几圈 + 随机角度)
+            const randomSpins = 5 + Math.random() * 5; // 5-10圈
+            const randomAngle = Math.random() * 360;
+            const totalRotation = randomSpins * 360 + randomAngle;
+            
+            // 应用旋转
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            // 4秒后显示结果
+            setTimeout(() => {
+                // 计算最终停止的位置对应的食物
+                const finalAngle = totalRotation % 360;
+                const sectionAngle = 360 / 8; // 8个扇形，每个45度
+                
+                // 因为指针在顶部，需要调整计算
+                const adjustedAngle = (360 - finalAngle + sectionAngle/2) % 360;
+                const sectionIndex = Math.floor(adjustedAngle / sectionAngle);
+                
+                const selectedFood = currentFoods[sectionIndex];
+                
+                // 显示结果
+                result.innerHTML = `
+                    <div class="result-text">
+                        <span class="result-emoji">${selectedFood.emoji}</span>
+                        今天就吃${selectedFood.name}吧！
+                    </div>
+                `;
+                
+                // 恢复按钮
+                isSpinning = false;
+                spinBtn.disabled = false;
+                spinBtn.textContent = '再转一次！';
+            }, 4000);
+        }
+        
+        // 页面加载时初始化转盘
+        window.addEventListener('load', initWheel);
+    </script>
+</body>
+</html>
