@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张鑫语的个人网站</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Noto Sans SC', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .cute-decoration {
+            position: fixed;
+            font-size: 2rem;
+            opacity: 0.3;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .deco-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .deco-2 { top: 20%; left: 90%; animation-delay: 1s; }
+        .deco-3 { top: 70%; left: 8%; animation-delay: 2s; }
+        .deco-4 { top: 80%; left: 85%; animation-delay: 3s; }
+        .deco-5 { top: 50%; left: 95%; animation-delay: 4s; }
+        .deco-6 { top: 30%; left: 2%; animation-delay: 5s; }
+        .deco-7 { top: 60%; left: 92%; animation-delay: 6s; }
+        .deco-8 { top: 90%; left: 15%; animation-delay: 7s; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .title {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .card-title {
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .floating-element {
+            position: fixed;
+            font-size: 20px;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall 8s linear forwards;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                max-width: 320px;
+                gap: 12px;
+            }
+            
+            .card {
+                padding: 15px 10px;
+                height: 100px;
+            }
+            
+            .card-icon {
+                font-size: 1.8rem;
+                margin-bottom: 5px;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .cute-decoration {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cute-decoration deco-1">🐶</div>
+    <div class="cute-decoration deco-2">📺</div>
+    <div class="cute-decoration deco-3">🐑</div>
+    <div class="cute-decoration deco-4">🐹</div>
+    <div class="cute-decoration deco-5">🐶</div>
+    <div class="cute-decoration deco-6">🐄</div>
+    <div class="cute-decoration deco-7">🧸</div>
+    <div class="cute-decoration deco-8">🌸</div>
+    
+    <header class="header">
+        <h1 class="title">欢迎来到张鑫语的个人网站~</h1>
+        <p class="subtitle">一个充满爱与温暖的小天地 💕</p>
+    </header>
+    
+    <main class="container">
+        <div class="card" onclick="showMessage('food')">
+            <span class="card-icon">🍰</span>
+            <h2 class="card-title">Food</h2>
+        </div>
+        
+        <div class="card" onclick="showMessage('music')">
+            <span class="card-icon">🎵</span>
+            <h2 class="card-title">Music</h2>
+        </div>
+        
+        <div class="card" onclick="showMessage('letter')">
+            <span class="card-icon">💌</span>
+            <h2 class="card-title">Letter</h2>
+        </div>
+        
+        <div class="card" onclick="showMessage('puppy')">
+            <span class="card-icon">🐶</span>
+            <h2 class="card-title">Puppy</h2>
+        </div>
+    </main>
+    
+    <script>
+        function showMessage(type) {
+            const messages = {
+                food: "🍰 哇！你点击了美食区域！\n这里将来会有好多好多美味的照片和食谱哦~ \n每一道菜都承载着满满的爱意！💕",
+                music: "🎵 音乐响起来啦！\n这里会收集所有让心情变好的歌曲！\n音乐是最好的情绪治愈师呢~ 🌈",
+                letter: "💌 你打开了温暖信箱！\n这里会存放所有珍贵的文字和回忆！\n每一封信都是友谊的见证~ ✨",
+                puppy: "🐶 汪汪！毛茸茸的朋友们在这里！\n准备好被可爱到融化了吗？\n小狗狗们会带给你满满的治愈能量！🌟"
+            };
+            
+            alert(messages[type]);
+        }
+        
+        // 添加一些互动效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 随机生成飘落的小元素
+            function createFloatingElement() {
+                const elements = ['💕', '🌸', '✨', '💖', '🦋'];
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.left = Math.random() * window.innerWidth + 'px';
+                element.textContent = elements[Math.floor(Math.random() * elements.length)];
+                
+                document.body.appendChild(element);
+                
+                setTimeout(() => {
+                    if (element.parentNode) {
+                        element.remove();
+                    }
+                }, 8000);
+            }
+            
+            // 每隔几秒创建一个飘落元素
+            setInterval(createFloatingElement, 3000);
+            
+            // 立即创建第一个元素
+            createFloatingElement();
+        });
+    </script>
+</body>
+</html>
